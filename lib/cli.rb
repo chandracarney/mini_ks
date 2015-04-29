@@ -8,10 +8,23 @@ class CLI
   end
 
   def start
-    printer.project_introduction
-
+    printer.instructions
     input = gets.chomp
-    message = Kickstarter.run(input)
-    puts message
+    until quit?(input)
+      message = Kickstarter.new.run(input)
+      puts message
+    end
+  end
+
+  def instructions?(input)
+    input == "i"
+  end
+
+  def begin?(input)
+    input == "b" || input == "y"
+  end
+
+  def quit?(input)
+    input == "q" || input == "quit"
   end
 end
