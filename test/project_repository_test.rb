@@ -5,10 +5,10 @@ require_relative '../lib/project'
 class ProjectRepositoryTest < Minitest::Test
   def test_it_can_add_new_projects
     project_repository = ProjectRepository.new
-    project = Project.new("Will", "400")
+    project = Project.new("Awesome_Sauce", "400")
 
     project_repository << project
-    
+
     assert_equal 1, project_repository.count
   end
 end

@@ -1,7 +1,8 @@
 class Project
-  attr_reader :name, :target_amount
-  def initialize(name, target_amount)
-    @name = name
-    @target_amount = target_amount
+  attr_reader :project_name, :amount
+  
+  def initialize(project_name, amount)
+    @project_name = project_name
+    @amount = amount
   end
 end

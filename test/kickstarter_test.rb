@@ -3,44 +3,44 @@ require_relative '../lib/kickstarter.rb'
 
 class KickstarterTest < Minitest::Test
   def test_it_creates_a_project
-    kickstarter = Kickstarter.new
+    ks = Kickstarter.new
     input = "project Awesome_Sauce 500"
 
-    message = kickstarter.run(input)
-    
-    assert_equal "Added Awesome_Sauce project with target of $500", message
-    assert_equal 1, kickstarter.project_repository.count
+    ks.input = input
+    ks.create_project
+
+    assert_equal 1, ks.project_repository.count
+    project = ks.project_repository.find("Awesome_Sauce")
+    assert_equal "Awesome_Sauce", project.project_name
+    assert_equal "500", project.amount
   end
-  
-  def test_it_invalidates_a_project_without_a_name
+
+  def test_it_creates_a_backer
+    ks = Kickstarter.new
+    input = "backer Jim Awesome_Sauce 4111111111111111 50"
+
+    ks.input = input
+    ks.create_backer_for_project
+
+    assert_equal 1, ks.backer_repository.count
+    backer = ks.backer_repository.find("Jim")
+    assert_equal "Jim", backer.backer_name
+    assert_equal "50", backer.amount
+  end
+
+  def test_backer_must_match_project_name
     skip
-    kickstarter = Kickstarter.new
-    input = "project 500"
+    ks = Kickstarter.new
+    project_input = "project Awesome_Sauce 500"
+    backer_input = "backer Jim Awesome_Sauce 4111111111111111 50"
 
-    message = kickstarter.run(input)
+    ks.input = project_input
+    ks.create_project
 
-    assert_equal "Please add a name for your project.", message
-    assert_equal 0, kickstarter.project_repository.count
-  end
+    backer = ks.project_repository.find("Awesome_Sauce")
 
-  def test_it_invalidates_a_project_without_target_amount
-    skip
-    kickstarter = Kickstarter.new
-    input = "project Awesome_Sauce"
-
-    message = kickstarter.run(input)
-
-    assert_equal "Please add a target amount for your project.", message
-    assert_equal 0, kickstarter.project_repository.count
-  end
-
-  def test_it_creates_a_backing
-    kickstarter = Kickstarter.new
-    input = "back John Awesome_Sauce 4111111111111111 50"
-
-    message = kickstarter.run(input)
-
-    assert_equal "John backed project Awesome_Sauce for $50", message
-    assert_equal 1, kickstarter.backer_repository.count
+    assert_equal "Awesome_Sauce", backer.project_name
+    assert_equal 1, ks.backer_repository.count
+    assert_equal "50", backer.amount
   end
 end

@@ -1,47 +1,76 @@
+require_relative 'printer'
 require_relative 'backer'
 require_relative 'project'
 require_relative 'project_repository'
 require_relative 'backer_repository'
 
 class Kickstarter
-  attr_reader :project_repository, :backer_repository
+  attr_reader :backer_repository, :project_repository, :printer, :validator
+  attr_accessor :input
 
   def initialize
-    @project_repository = ProjectRepository.new
     @backer_repository = BackerRepository.new
+    @project_repository = ProjectRepository.new
+    @printer = Printer.new
+    @input = ""
+    @validator = Validator.new
   end
 
-  def run(input)
-    args = input.split(" ")
-    if args.first == "project"
-      add_project(args)
-    elsif args.first == "back"
-      add_backing(args)
-    else
-      "Please add a <project> or <back> a project."
+  def run
+    @input = gets.chomp
+    until quit?
+      if project? && valid_project?
+        create_project
+      elsif back? && valid_backer?
+        create_backer_for_project
+      else
+        printer.incorrect_base_input
+      end
+      @input = gets.chomp
     end
   end
 
-  def add_project(args)
-    if args[2]
-      project = Project.new(args[1], args[2])
-      project_repository << project
-      puts "Added #{project.name} project with target of $#{project.target_amount}"
-    end
+  def create_project
+    project = Project.new(*drop_first_input_argument)
+    project_repository << project
+    printer.created_project(*drop_first_input_argument)
   end
 
-  def add_backing(args)
-    if args[4]
-      backer = Backer.new(args[1], args[2], args[3], args[4])
-      backer_repository << backer
-      "#{backer.name} backed project #{backer.project_name} for $#{backer.amount}"
-    end
+  def create_backer_for_project
+    backer = Backer.new(*drop_first_input_argument)
+    backer_repository << backer
+    printer.created_backer(*drop_first_input_argument)
   end
 
-  # def validate_input(args)
-  #   elsif args[2] && args.last[/\d/]
-  #     add_project(args)
-  #   else "Please add a name for your project."
-  #   end
-  # end
+  private
+
+  def quit?
+    @input == "q" || @input == "quit"
+  end
+
+  def input_arguments
+    @input.split
+  end
+
+  def project?
+    input_arguments.first == "project" && input_arguments.length == 3
+  end
+
+  def valid_project?
+    validator.valid_name?(input_arguments[1])
+  end
+
+  def back?
+    input_arguments.first == "back" && input_arguments.length == 5
+  end
+
+  def valid_backer?
+    validator.valid_name?(input_arguments[1]) &&
+    validator.valid_credit_card?(input_arguments[3]) &&
+    validator.valid_amount?(input_arguments[4])
+  end
+
+  def drop_first_input_argument
+    input_arguments.drop(1)
+  end
 end

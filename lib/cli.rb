@@ -1,30 +1,16 @@
 require_relative 'printer'
 
 class CLI
-  attr_reader :printer
+  attr_reader :printer, :input
 
   def initialize
     @printer = Printer.new
+    @kickstarter = Kickstarter.new
   end
 
   def start
     printer.instructions
-    input = gets.chomp
-    until quit?(input)
-      message = Kickstarter.new.run(input)
-      puts message
-    end
-  end
-
-  def instructions?(input)
-    input == "i"
-  end
-
-  def begin?(input)
-    input == "b" || input == "y"
-  end
-
-  def quit?(input)
-    input == "q" || input == "quit"
+    kickstarter.run
+    printer.goodbye
   end
 end
