@@ -1,7 +1,7 @@
 require_relative 'printer'
 
 class CLI
-  attr_reader :printer, :input
+  attr_reader :printer
 
   def initialize
     @printer = Printer.new
@@ -10,7 +10,7 @@ class CLI
 
   def start
     printer.instructions
-    kickstarter.run
+    @kickstarter.run
     printer.goodbye
   end
 end

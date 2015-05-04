@@ -22,6 +22,10 @@ You will need the following things properly installed on your computer.
 
 * `rake test`
 
+### Running the Program
+
+* `ruby mini_ks.rb`
+
 ##setup
 
 After a lot of thought and planning, I initially decided to go towards a CLI that would interface with a Rails API (the storage and validations would come easily). I started test driving the API to create projects on Sunday. The next day I decided to start over with a simple CLI application. Here's the implementation and documentation, feel free to follow along with my commits. 
